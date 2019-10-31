@@ -137,22 +137,22 @@ def save_phase_space_plots(path, I_e, V, n, m, h):
 
     for i in range(len(time_start)):
         plt.plot(n[time_start[i]:time_end[i]], V[time_start[i]:time_end[i]], 'g', label='V(n)')
-        plt.xlabel('time')
-        plt.ylabel('values')
+        plt.xlabel('n')
+        plt.ylabel('V')
         plt.legend(loc='best')
         plt.savefig(path + "/V(n)_" + str(i))
         plt.close()
 
         plt.plot(m[time_start[i]:time_end[i]], V[time_start[i]:time_end[i]], 'g', label='V(m)')
-        plt.xlabel('time')
-        plt.ylabel('values')
+        plt.xlabel('m')
+        plt.ylabel('V')
         plt.legend(loc='best')
         plt.savefig(path + "/V(m)_" + str(i))
         plt.close()
 
         plt.plot(h[time_start[i]:time_end[i]], V[time_start[i]:time_end[i]], 'g', label='V(h)')
-        plt.xlabel('time')
-        plt.ylabel('values')
+        plt.xlabel('h')
+        plt.ylabel('V')
         plt.legend(loc='best')
         plt.savefig(path + "/V(h)_" + str(i))
         plt.close()
@@ -172,7 +172,6 @@ if __name__ == "__main__":
     N = 10000
     T = 500
 
-    # time points
     t = np.linspace(0, T, N)
     I_e = calc_I_inj_1(N, T, t)
 
