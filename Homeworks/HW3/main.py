@@ -64,15 +64,15 @@ class SNN:
             if self.u2[t, i] > u_spike:
                 self.prev_t_2[i] = t
 
-    def visualize_u(self):
-        tim = np.arange(T)
+    def visualize_u(self, maxT):
+        tim = np.arange(maxT)
         for i in range(hidden_sz):
-            make_plot(tim, self.u1[:T, i], 'g', 'u(t)', 'time', 'u')
+            make_plot(tim, self.u1[:maxT, i], 'g', 'u(t)', 'time', 'u')
             plt.savefig(path + "/u_hidden_" + str(i) + "(t)")
             plt.close()
 
         for i in range(output_sz):
-            make_plot(tim, self.u2[:T, i], 'g', 'u(t)', 'time', 'u')
+            make_plot(tim, self.u2[:maxT, i], 'g', 'u(t)', 'time', 'u')
             plt.savefig(path + "/u_out_" + str(i) + "(t)")
             plt.close()
 
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     hidden_sz = 10
 
     T = 100
-    input_pattern = np.zeros((T, input_sz))
+    input_pattern = np.zeros((T * 10, input_sz))
     for i in range(input_sz):
         j = -1
         while j < 100:
@@ -99,7 +99,9 @@ if __name__ == "__main__":
 
     snn1 = SNN(input_sz, hidden_sz, output_sz)
 
-    for tt in range(T):
-        snn1.apply(input_pattern[tt], tt)
+    epoch_cnt = 5
+    for epoch in range(epoch_cnt):
+        for tt in range(T):
+            snn1.apply(input_pattern[tt], epoch * T + tt)
 
-    snn1.visualize_u()
+    snn1.visualize_u(T * epoch_cnt)
