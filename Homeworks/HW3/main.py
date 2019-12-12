@@ -64,44 +64,62 @@ class SNN:
             if self.u2[t, i] > u_spike:
                 self.prev_t_2[i] = t
 
-    def visualize_u(self, maxT):
+    def visualize_u(self, maxT, text=""):
         tim = np.arange(maxT)
         for i in range(hidden_sz):
             make_plot(tim, self.u1[:maxT, i], 'g', 'u(t)', 'time', 'u')
-            plt.savefig(path + "/u_hidden_" + str(i) + "(t)")
+            plt.savefig(path + "/u_hidden_" + str(i) + "(t)" + text)
             plt.close()
 
         for i in range(output_sz):
             make_plot(tim, self.u2[:maxT, i], 'g', 'u(t)', 'time', 'u')
-            plt.savefig(path + "/u_out_" + str(i) + "(t)")
+            plt.savefig(path + "/u_out_" + str(i) + "(t)" + text)
             plt.close()
 
 
 if __name__ == "__main__":
     path = "data"
-    input_sz = 20
-    output_sz = 2
+    lam = 0.04
+    for it in range(2):
+        input_sz = 20
+        output_sz = 2
 
-    hidden_sz = 10
+        hidden_sz = 10
 
-    T = 100
-    input_pattern = np.zeros((T * 10, input_sz))
-    for i in range(input_sz):
-        j = -1
-        while j < 100:
-            lam = 0.05
-            j += int(-np.log(1. - np.random.rand()) / lam) + 1
-            if j >= 100:
-                break
-            input_pattern[j, i] = 1
+        T = 100
+        input_pattern = np.zeros((T * 10, input_sz))
+        for i in range(input_sz):
+            j = -1
+            while j < 100:
+                j += int(-np.log(1. - np.random.rand()) / lam) + 1
+                if j >= 100:
+                    break
+                input_pattern[j, i] = 1
 
-    # print(input_pattern)
+        # print(input_pattern)
 
-    snn1 = SNN(input_sz, hidden_sz, output_sz)
+        snn1 = SNN(input_sz, hidden_sz, output_sz)
 
-    epoch_cnt = 5
-    for epoch in range(epoch_cnt):
-        for tt in range(T):
-            snn1.apply(input_pattern[tt], epoch * T + tt)
+        epoch_cnt = 5
+        for epoch in range(epoch_cnt):
+            for tt in range(T):
+                snn1.apply(input_pattern[tt], epoch * T + tt)
 
-    snn1.visualize_u(T * epoch_cnt)
+        snn1.visualize_u(T * epoch_cnt, text="_" + str(it))
+
+        snn2 = SNN(input_sz, hidden_sz, output_sz)
+
+        input_pattern_noise = input_pattern
+        for i in range(input_pattern_noise.shape[0]):
+            for j in range(input_pattern_noise.shape[1]):
+                if np.random.rand() < 0.05:
+                    input_pattern_noise[i, j] = 1 if np.random.rand() < 0.5 else 0
+
+        epoch_cnt = 5
+        for epoch in range(epoch_cnt):
+            for tt in range(T):
+                snn1.apply(input_pattern_noise[tt], epoch * T + tt)
+
+        snn1.visualize_u(T * epoch_cnt, text="_noise_" + str(it))
+
+        lam += 0.01
