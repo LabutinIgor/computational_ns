@@ -73,14 +73,13 @@ if __name__ == "__main__":
         for j in range(x_r4):
             q_r4[i] += will_activate(p1_r4[i])
 
-        u[i] = u[i - 1] + u_r2 * time_quant_ms * (q_r2[i] + u_r3 * q_r3[i] + u_r4 * q_r4[i])
+        u[i] = u[i - 1] + (u_r2 * q_r2[i] + u_r3 * q_r3[i] + u_r4 * q_r4[i]) * time_quant_ms
         if u[i] >= u_spike:
             f_activation[i] = 1
             u[i] = u0
             spikes_cnt += 1
         else:
             f_activation[i] = 0
-
 
     print(spikes_cnt)
 
